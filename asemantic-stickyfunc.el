@@ -63,23 +63,25 @@
   (save-excursion
     (set-buffer (window-buffer window))
     (goto-char display-start)
-    (re-search-backward asemantic-stickyfunc-func-regexp (point-min) :noerror)
-    (setq asemantic-stickyfunc-current-position (point)
-          asemantic-stickyfunc-current (buffer-substring (point) (point-at-eol)))))
+    (if (looking-at asemantic-stickyfunc-func-regexp)
+	(setq header-line-format nil)
+      (re-search-backward asemantic-stickyfunc-func-regexp (point-min) :noerror)
+      (setq asemantic-stickyfunc-current-position (point)
+            asemantic-stickyfunc-current (buffer-substring (point) (point-at-eol))
+	    header-line-format asemantic-stickyfunc-format))))
 
 ;;;###autoload
 (define-minor-mode asemantic-stickyfunc-mode
   nil
   :keymap asemantic-stickyfunc-mode-map
   ;;;; Teardown
-  (setq header-line-format asemantic-stickyfunc-old-format)
   (remove-hook 'window-scroll-functions #'asemantic-stickyfunc-update :local)
+  (setq header-line-format asemantic-stickyfunc-old-format)
   (when asemantic-stickyfunc-mode
     ;;;; Construction
+    (setq asemantic-stickyfunc-old-format header-line-format)
     (asemantic-stickyfunc-update (selected-window) (window-start))
-    (add-hook 'window-scroll-functions #'asemantic-stickyfunc-update nil :local)
-    (setq asemantic-stickyfunc-old-format header-line-format
-          header-line-format asemantic-stickyfunc-format)))
+    (add-hook 'window-scroll-functions #'asemantic-stickyfunc-update nil :local)))
 
 (provide 'asemantic-stickyfunc)
 
