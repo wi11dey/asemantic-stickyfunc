@@ -63,7 +63,8 @@
   (save-excursion
     (set-buffer (window-buffer window))
     (goto-char display-start)
-    (if (looking-at asemantic-stickyfunc-func-regexp)
+    (if (or (looking-at asemantic-stickyfunc-func-regexp)
+	    (= (point) (point-min)))
 	(setq header-line-format nil)
       (re-search-backward asemantic-stickyfunc-func-regexp (point-min) :noerror)
       (setq asemantic-stickyfunc-current-position (point)
