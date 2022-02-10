@@ -57,19 +57,21 @@
   (interactive "@")
   (when asemantic-stickyfunc-current-position
     (goto-char asemantic-stickyfunc-current-position)
-    (set-window-start (selected-window) asemantic-stickyfunc-current-position)))
+    (set-window-start (selected-window) asemantic-stickyfunc-current-position)
+    (setq header-line-format nil)))
 
 (defun asemantic-stickyfunc-update (window display-start)
   (save-excursion
     (set-buffer (window-buffer window))
-    (goto-char display-start)
-    (if (or (looking-at asemantic-stickyfunc-func-regexp)
-	    (= (point) (point-min)))
-	(setq header-line-format nil)
-      (re-search-backward asemantic-stickyfunc-func-regexp (point-min) :noerror)
-      (setq asemantic-stickyfunc-current-position (point)
-            asemantic-stickyfunc-current (buffer-substring (point) (point-at-eol))
-	    header-line-format asemantic-stickyfunc-format))))
+    (when asemantic-stickyfunc-mode
+      (goto-char display-start)
+      (if (or (looking-at asemantic-stickyfunc-func-regexp)
+	      (= (point) (point-min)))
+	  (setq header-line-format nil)
+	(re-search-backward asemantic-stickyfunc-func-regexp (point-min) :noerror)
+	(setq asemantic-stickyfunc-current-position (point)
+	      asemantic-stickyfunc-current (buffer-substring (point) (point-at-eol))
+	      header-line-format asemantic-stickyfunc-format)))))
 
 ;;;###autoload
 (define-minor-mode asemantic-stickyfunc-mode
