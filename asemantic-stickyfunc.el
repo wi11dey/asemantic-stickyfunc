@@ -72,10 +72,11 @@
 	(setq asemantic-stickyfunc-current-position (point)
 	      asemantic-stickyfunc-current (buffer-substring (point) (point-at-eol))
 	      header-line-format asemantic-stickyfunc-format)
-	(add-face-text-property 0 (length asemantic-stickyfunc-current)
-				buffer-face-mode-face
-				:append
-				asemantic-stickyfunc-current)))))
+	(when buffer-face-mode
+	  (add-face-text-property 0 (length asemantic-stickyfunc-current)
+				  buffer-face-mode-face
+				  :append
+				  asemantic-stickyfunc-current))))))
 
 ;;;###autoload
 (define-minor-mode asemantic-stickyfunc-mode
