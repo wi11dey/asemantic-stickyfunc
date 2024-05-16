@@ -52,6 +52,9 @@
                                          (:eval asemantic-stickyfunc-current))
   "Header-line format to use for asemantic-stickyfunc.")
 
+(defcustom asemantic-stickyfunc-delay 0
+  "Number of seconds to wait after a scroll event to update the header-line.")
+
 (defun asemantic-stickyfunc-scroll-to-func ()
   "Scroll to the currently highlighted function declaration."
   (interactive "@")
@@ -60,7 +63,7 @@
     (set-window-start (selected-window) asemantic-stickyfunc-current-position)
     (setq header-line-format nil)))
 
-(defun asemantic-stickyfunc-update (window display-start)
+(defun asemantic--stickyfunc-update (window display-start)
   (save-excursion
     (set-buffer (window-buffer window))
     (when asemantic-stickyfunc-mode
@@ -77,6 +80,17 @@
 				  buffer-face-mode-face
 				  :append
 				  asemantic-stickyfunc-current))))))
+
+(defvar asemantic--stickyfunc-update-timer nil)
+(defun asemantic-stickyfunc-update (window display-start)
+  (when asemantic--stickyfunc-update-timer
+    (cancel-timer asemantic--stickyfunc-update-timer))
+  (setq asemantic--stickyfunc-update-timer (run-with-timer
+					    asemantic-stickyfunc-delay
+					    nil
+					    #'asemantic--stickyfunc-update
+					    window
+					    display-start)))
 
 ;;;###autoload
 (define-minor-mode asemantic-stickyfunc-mode
